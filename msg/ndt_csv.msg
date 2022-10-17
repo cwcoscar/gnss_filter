@@ -1,0 +1,13 @@
+time stamp
+# receiving time
+
+float64 x
+float64 y
+float64 z
+
+float64 orientation_x
+float64 orientation_y
+float64 orientation_z
+float64 orientation_w
+
+# NDT localization
