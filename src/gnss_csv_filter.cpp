@@ -47,8 +47,26 @@ void Gnss_csv::fixCallback(const sensor_msgs::NavSatFix& msg){
 
 void Gnss_csv::navpvtCallback(const ublox_msgs::NavPVT& msg){
     _pvt_data = msg;
+    int carrier_mask = 0b11000000;
+    if (_pvt_data.fixType = 0){
+        _csv_data.fixType = 0;
+    }
+    else{
+        if (int(_pvt_data.flags & carrier_mask) == 128){
+            _csv_data.fixType = 4;
+        }
+        else if (int(_pvt_data.flags & carrier_mask) == 64){
+            _csv_data.fixType = 5;
+        }
+        else if (int(_pvt_data.flags & 2) == 2){
+            _csv_data.fixType = 2;
+        }
+        else if (int(_pvt_data.flags & 1) == 1){
+            _csv_data.fixType = 1;
+        }
+    }
+    
     _csv_data.numSV = _pvt_data.numSV;
-    _csv_data.fixType = _pvt_data.fixType;
     _csv_data.pDOP = _pvt_data.pDOP;
     _csv_data.pDOP = _csv_data.pDOP * 0.01;
     _csv_data.yaw = _pvt_data.heading;
@@ -104,9 +122,11 @@ int main(int argc, char **argv){
     std::string dir;
     std::string filename;
     std::string filetype = "_gnss";
+    std::string topic;
 
     n.param("directory", dir, std::string("/home/meclab/catkin_ws/src/gnss_filter/data/bag/"));
     n.param("filename", filename, std::string("sunrise-20220928162345_L1C1C2G1G2_route_10-1"));
+    n.param("topic", topic, std::string("/ublox_f9k"));
 
     if(exists_test(dir + filename + filetype + ".csv")){
         std::cout << "\033[31m" << "File exists! Check the file name!" << "\033[0m" << std::endl;
@@ -116,8 +136,8 @@ int main(int argc, char **argv){
     csv_file.open(dir + filename + filetype + ".csv");
     Gnss_csv gnss_csv;
 
-    ros::Subscriber sub1 = n.subscribe("/ublox_f9k/fix", 1000, &Gnss_csv::fixCallback, &gnss_csv);
-    ros::Subscriber sub2 = n.subscribe("/ublox_f9k/navpvt", 1000, &Gnss_csv::navpvtCallback, &gnss_csv);
+    ros::Subscriber sub1 = n.subscribe(topic+"/fix", 1000, &Gnss_csv::fixCallback, &gnss_csv);
+    ros::Subscriber sub2 = n.subscribe(topic+"/navpvt", 1000, &Gnss_csv::navpvtCallback, &gnss_csv);
 
     ros::Rate loop_rate(1);
 

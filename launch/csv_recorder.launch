@@ -1,15 +1,14 @@
 <!---->
 <launch>
-  <arg name="dir" value="/home/meclab/catkin_ws/src/gnss_filter/data/bag/"/>
-  <arg name="filename" value="sunrise-20220928162345_L1C1C2G1G2_route_10-1"/>
+  <arg name="dir" value="/home/meclab/Desktop/Bag/NCKU_outfield0906/"/>
+  <arg name="filename" value="autoware-20220906144103_robosense_ublox_9"/>
 
   <node name="gnss_csv_filter" pkg="gnss_filter" type="gnss_csv_filter" output="screen"/>
     <param name="directory" value="$(arg dir)"/>
     <param name="filename" value="$(arg filename)"/>
     <param name="filetype" value="_gnss"/>
-    <!-- <remap from="/ublox_f9k/fix"to="/ublox_gps/fix"/>
-    <remap from="/ublox_f9k/navpvt"to="/ublox_gps/navpvt"/> -->
+    <param name="topic" value="/ublox_gps"/>
 
   <node name="ndt_csv_filter" pkg="gnss_filter" type="ndt_csv_filter" output="screen"/>
-  <node name="gnss_raw_csv_filter" pkg="gnss_filter" type="gnss_raw_csv_filter" output="screen"/>
+  <!-- <node name="gnss_raw_csv_filter" pkg="gnss_filter" type="gnss_raw_csv_filter" output="screen"/> -->
 </launch>

@@ -114,7 +114,7 @@ void Gnss_csv::write_csv(){
 }
 
 double Gnss_csv::gpstime2utctime(const double TOW, const int week, const int leaps){
-    double time = _secs_of_week * week + TOW - leaps + _utc_time_1980;
+    double time = _secs_of_week * week + TOW - leaps + _utc_time_1980; //https://www.epochconverter.com/ and https://www.utctime.net/utc-timestamp
     return time;
 }
 
@@ -131,9 +131,11 @@ int main(int argc, char **argv){
     std::string dir;
     std::string filename;
     std::string filetype = "_gnssraw";
+    std::string topic;
 
     ros::param::get("directory", dir);
     ros::param::get("filename", filename);
+    ros::param::get("topic", topic);
 
     if(exists_test(dir + filename + filetype + ".csv")){
         std::cout << "\033[31m" << "File exists! Check the file name!" << "\033[0m" << std::endl;
